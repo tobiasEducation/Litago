@@ -1,0 +1,89 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Book Library</title>
+    <style>
+        body { font-family: Arial, sans-serif; text-align: center; }
+        .book-container { display: flex; flex-wrap: wrap; justify-content: center; gap: 20px; }
+        .book { width: 200px; padding: 10px; border: 1px solid #ddd; border-radius: 10px; text-align: center; }
+        img { width: 100%; height: 250px; object-fit: cover; border-radius: 5px; }
+        h3 { font-size: 16px; margin: 10px 0; }
+        p { font-size: 14px; color: #555; }
+        .buttons { margin-top: 20px; }
+        button { padding: 10px 20px; font-size: 16px; margin: 5px; cursor: pointer; }
+    </style>
+</head>
+<body>
+    <h1>Book Library</h1>
+    <div class="book-container" id="bookList"></div>
+
+    <div class="buttons">
+        <button onclick="addBook()">Add Book</button>
+        <button onclick="deleteBook()">Delete Book</button>
+    </div>
+
+    <script>
+        async function fetchBooks() {
+            console.log("Calling GET /api/books");
+            const response = await fetch('/api/books');
+            const books = await response.json();
+            const bookList = document.getElementById('bookList');
+
+            bookList.innerHTML = books.map(book => `
+                <div class="book">
+                    <img src="https://diybookcovers.com/wp-content/uploads/2023/07/scifi4thumb.jpg" alt="Book Cover">
+                    <h3>${book.Title}</h3>
+                    <p>by ${book.Author}</p>
+                </div>
+            `).join('');
+        }
+
+        async function addBook() {
+            const title = prompt("Enter book title:");
+            const author = prompt("Enter book author:");
+
+            if (!title || !author) {
+                alert("Title and Author are required!");
+                return;
+            }
+
+            console.log("Calling POST /api/books");
+            const response = await fetch('/api/books', {
+                method: 'POST',
+                headers: { 'Content-Type': 'application/json' },
+                body: JSON.stringify({ Title: title, Author: author })
+            });
+
+            if (response.ok) {
+                alert("Book added successfully!");
+                fetchBooks();
+            } else {
+                alert("Error adding book");
+            }
+        }
+
+        async function deleteBook() {
+            const bookId = prompt("Enter Book ID to delete:");
+
+            if (!bookId) {
+                alert("Book ID is required!");
+                return;
+            }
+
+            console.log(`Calling DELETE /api/books/${bookId}`);
+            const response = await fetch(`/api/books/${bookId}`, { method: 'DELETE' });
+
+            if (response.ok) {
+                alert("Book deleted successfully!");
+                fetchBooks();
+            } else {
+                alert("Error deleting book");
+            }
+        }
+
+        fetchBooks();
+    </script>
+</body>
+</html>
