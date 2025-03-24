@@ -1,7 +1,7 @@
 {
   "name": "litago_kode",
   "version": "1.0.0",
-  "main": "script.js",
+  "main": "server.js",
 "scripts": {
   "test": "echo \"No tests yet\"",
   "start": "node server.js"
