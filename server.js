@@ -3,7 +3,7 @@ const sql = require("mssql");
 const cors = require("cors");
 
 const app = express();
-const PORT = 3000;
+const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors());
@@ -57,6 +57,7 @@ app.post("/api/books", async (req, res) => {
     }
 });
 
+
 app.delete("/api/books/:id", async (req, res) => {
     const bookId = req.params.id;
     console.log(`DELETE /api/books/${bookId} called`);
@@ -74,4 +75,4 @@ app.delete("/api/books/:id", async (req, res) => {
     }
 });
 
-app.listen(PORT, () => console.log(`Server running on http://localhost:${PORT}`));
+app.listen(PORT, () => console.log(`Server running on port ${PORT}`));
