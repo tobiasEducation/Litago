@@ -6,7 +6,10 @@ const app = express();
 const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
-app.use(cors());
+app.use(cors({
+  origin: '*', // or specify your domain: 'https://litagowebapp-c0apd6f7dfbpf9c4.northeurope-01.azurewebsites.net'
+  methods: ['GET', 'POST', 'DELETE']
+}));
 app.use(express.static(__dirname));
 
 // Azure SQL Database Connection 

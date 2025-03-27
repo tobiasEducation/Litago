@@ -25,9 +25,11 @@
     </div>
 
     <script>
+        const API_BASE = window.location.origin; // Use the current origin
+
         async function fetchBooks() {
             console.log("Calling GET /api/books");
-            const response = await fetch('/api/books');
+            const response = await fetch(`${API_BASE}/api/books`);
             const books = await response.json();
             const bookList = document.getElementById('bookList');
 
@@ -50,7 +52,7 @@
             }
 
             console.log("Calling POST /api/books");
-            const response = await fetch('/api/books', {
+            const response = await fetch(`${API_BASE}/api/books`, {
                 method: 'POST',
                 headers: { 'Content-Type': 'application/json' },
                 body: JSON.stringify({ Title: title, Author: author })
@@ -73,7 +75,7 @@
             }
 
             console.log(`Calling DELETE /api/books/${bookId}`);
-            const response = await fetch(`/api/books/${bookId}`, { method: 'DELETE' });
+            const response = await fetch(`${API_BASE}/api/books/${bookId}`, { method: 'DELETE' });
 
             if (response.ok) {
                 alert("Book deleted successfully!");
