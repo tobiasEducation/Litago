@@ -38,16 +38,21 @@ async function connectToDatabase() {
 connectToDatabase();
 
 app.get("/api/books", async (req, res) => {
-    console.log("GET /api/books called");
     try {
+        console.log("📚 /api/books hit");
+
         if (!pool?.connected) {
             pool = await sql.connect(dbConfig);
+            console.log("✅ Connected to DB");
         }
+
         const result = await pool.request().query("SELECT * FROM Books");
+        console.log("📦 Query result:", result.recordset);
+
         res.json(result.recordset);
     } catch (err) {
-        console.error("Error fetching books:", err.message);
-        res.status(500).json({ error: "Internal Server Error" });
+        console.error("❌ Error in /api/books:", err);
+        res.status(500).json({ error: err.message });
     }
 });
 
