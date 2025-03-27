@@ -43,7 +43,8 @@ app.get("/api/books", async (req, res) => {
         const result = await pool.request().query("SELECT * FROM Books");
         res.json(result.recordset);
     } catch (err) {
-        res.status(500).json({ error: err.message });
+        console.error("Error fetching books:", err.message);
+        res.status(500).json({ error: "Internal Server Error" });
     }
 });
 
