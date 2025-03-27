@@ -27,6 +27,9 @@ async function connectToDatabase() {
     try {
         pool = await sql.connect(dbConfig);
         console.log("Connected to Azure SQL Database");
+        pool.request().query("SELECT 1 as test")
+            .then(() => console.log("Test query successful"))
+            .catch(err => console.error("Test query failed:", err));
     } catch (err) {
         console.error("Database connection failed:", err);
     }
