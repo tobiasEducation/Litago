@@ -2,14 +2,17 @@
   "name": "litago_kode",
   "version": "1.0.0",
   "main": "server.js",
-"scripts": {
-  "test": "echo \"No tests yet\"",
-  "start": "node server.js"
-},
+  "scripts": {
+    "test": "echo \"No tests yet\"",
+    "start": "node server.js"
+  },
   "keywords": [],
   "author": "",
   "license": "ISC",
   "description": "",
+  "engines": {
+    "node": ">=18"
+  },
   "dependencies": {
     "cors": "^2.8.5",
     "express": "^4.21.2",
