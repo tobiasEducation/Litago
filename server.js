@@ -7,23 +7,25 @@ const PORT = process.env.PORT || 3000;
 
 app.use(express.json());
 app.use(cors({
-  origin: '*', // or specify your domain: 'https://litagowebapp-c0apd6f7dfbpf9c4.northeurope-01.azurewebsites.net'
+  origin: '*', // or specify your domain for security
   methods: ['GET', 'POST', 'DELETE']
 }));
 app.use(express.static(__dirname));
 
 // Azure SQL Database Connection 
 const dbConfig = {
-    user: "CloudSAfc7981b5",
-    password: "Sarapus14!",
-    server: "litagodb.database.windows.net",
-    database: "Litago_Database",
+    user: process.env.DB_USER || "CloudSAfc7981b5",
+    password: process.env.DB_PASSWORD || "Sarapus14!",
+    server: process.env.DB_SERVER || "litagodb.database.windows.net",
+    database: process.env.DB_NAME || "Litago_Database",
     options: { encrypt: true }
 };
 
+let pool;
+
 async function connectToDatabase() {
     try {
-        await sql.connect(dbConfig);
+        pool = await sql.connect(dbConfig);
         console.log("Connected to Azure SQL Database");
     } catch (err) {
         console.error("Database connection failed:", err);
@@ -35,7 +37,10 @@ connectToDatabase();
 app.get("/api/books", async (req, res) => {
     console.log("GET /api/books called");
     try {
-        const result = await sql.query("SELECT * FROM Books");
+        if (!pool?.connected) {
+            pool = await sql.connect(dbConfig);
+        }
+        const result = await pool.request().query("SELECT * FROM Books");
         res.json(result.recordset);
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -51,9 +56,13 @@ app.post("/api/books", async (req, res) => {
 
     console.log("POST /api/books called");
     try {
-        await sql.query(
-            `INSERT INTO Books (Title, Author) VALUES ('${Title}', '${Author}')`
-        );
+        if (!pool?.connected) {
+            pool = await sql.connect(dbConfig);
+        }
+        await pool.request()
+            .input("Title", sql.NVarChar, Title)
+            .input("Author", sql.NVarChar, Author)
+            .query("INSERT INTO Books (Title, Author) VALUES (@Title, @Author)");
         res.status(201).json({ message: "Book added successfully" });
     } catch (err) {
         res.status(500).json({ error: err.message });
@@ -66,7 +75,12 @@ app.delete("/api/books/:id", async (req, res) => {
     console.log(`DELETE /api/books/${bookId} called`);
 
     try {
-        const result = await sql.query(`DELETE FROM Books WHERE BookID = ${bookId}`);
+        if (!pool?.connected) {
+            pool = await sql.connect(dbConfig);
+        }
+        const result = await pool.request()
+            .input("bookId", sql.Int, bookId)
+            .query("DELETE FROM Books WHERE BookID = @bookId");
 
         if (result.rowsAffected[0] === 0) {
             return res.status(404).json({ error: "Book not found" });
