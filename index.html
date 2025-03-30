@@ -18,6 +18,8 @@
 </head>
 <body>
     <h1>Book Library</h1>
+    <div id="apiResponse" style="margin-bottom: 20px; font-size: 18px; color: #333;"></div>
+    <div id="result" style="margin-bottom: 20px; font-size: 18px; color: #333;"></div>
     <div class="book-container" id="bookList"></div>
 
     <div style="display: flex; justify-content: center; align-items: center; margin-top: 20px;">
@@ -101,6 +103,38 @@
                 alert("Error deleting book");
             }
         }
+
+        async function fetchApiResponse() {
+            try {
+                const response = await fetch('/api/trigger');
+                const data = await response.text();
+                document.getElementById('apiResponse').innerText = data;
+            } catch (error) {
+                console.error("Error fetching API response:", error);
+            }
+        }
+
+        async function getGreeting() {
+            const name = "Bent";
+            try {
+                const response = await fetch(`https://litagoapifunc1.azurewebsites.net/api/HttpTrigger?name=${name}`, {
+                    mode: 'cors'
+                });
+                if (!response.ok) {
+                    throw new Error("Failed to fetch greeting");
+                }
+                const text = await response.text();
+                document.getElementById("result").innerText = text;
+            } catch (error) {
+                console.error("Error fetching greeting:", error);
+                document.getElementById("result").innerText = "Error fetching greeting";
+            }
+        }
+
+        window.onload = function() {
+            fetchApiResponse();
+            getGreeting();
+        };
 
         fetchBooks();
     </script>
