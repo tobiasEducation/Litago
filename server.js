@@ -15,10 +15,10 @@ app.use(express.static(__dirname));
 
 // Azure SQL Database Connection 
 const dbConfig = {
-    user: process.env.DB_USER || "CloudSAfc7981b5",
-    password: process.env.DB_PASSWORD || "Sarapus14!",
-    server: process.env.DB_SERVER || "litagodb.database.windows.net",
-    database: process.env.DB_NAME || "Litago_Database",
+    user: "CloudSAfc7981b5",
+    password: "Sarapus14!",
+    server: "litagodb.database.windows.net",
+    database: "Litago_Database",
     options: { encrypt: true }
 };
 
