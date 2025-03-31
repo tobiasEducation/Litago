@@ -24,6 +24,7 @@ const dbConfig = {
 
 let pool;
 
+// Connect To Database
 async function connectToDatabase() {
     try {
         pool = await sql.connect(dbConfig);
